@@ -120,7 +120,37 @@
       </div>
 
       <!-- RIGHT: Settings -->
-      <div class="col-side">
+        <!-- Auto-Scan Card -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+            <h2 class="card-title" style="margin:0">Auto-Scan Lagu Baru</h2>
+            <label class="switch-toggle" title="Aktifkan/Nonaktifkan Auto-Scan">
+              <input type="checkbox" id="autoScanToggle" checked />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <p class="hint">Otomatis mendeteksi file musik baru yang di-upload ke folder Google Drive secara berkala.</p>
+
+          <div class="form-group" style="margin-top:14px">
+            <label>Interval Pengecekan</label>
+            <select id="autoScanInterval" class="form-select">
+              <option value="5">Setiap 5 Menit</option>
+              <option value="15" selected>Setiap 15 Menit (Default)</option>
+              <option value="30">Setiap 30 Menit</option>
+              <option value="60">Setiap 1 Jam</option>
+            </select>
+          </div>
+
+          <div class="autoscan-info" id="autoscanInfo" style="margin-top:10px;font-size:0.8rem;color:#10b981;display:flex;align-items:center;gap:6px;">
+            <span>🟢</span> <span id="autoScanStatusTxt">Auto-Scan Aktif</span>
+          </div>
+
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn-ghost" id="btnScanAllNow">🔄 Scan Semua Sekarang</button>
+            <button class="btn-primary" id="btnSaveAutoScan">Simpan</button>
+          </div>
+        </div>
+
         <!-- API Key Card -->
         <div class="card">
           <h2 class="card-title">Google API Key</h2>

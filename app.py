@@ -400,8 +400,21 @@ def api_admin_config():
     cfg  = load_config()
     if 'api_key' in data: cfg['api_key'] = data['api_key']
     if 'music_dir' in data: cfg['music_dir'] = data['music_dir']
+    if 'auto_scan_enabled' in data: cfg['auto_scan_enabled'] = bool(data['auto_scan_enabled'])
+    if 'auto_scan_interval_minutes' in data: cfg['auto_scan_interval_minutes'] = int(data['auto_scan_interval_minutes'])
     save_config(cfg)
     return jsonify({'ok': True})
+
+@app.route('/api/admin/scan-all', methods=['POST'])
+@admin_required
+def api_admin_scan_all():
+    sources = load_sources()
+    scanned_count = 0
+    for s in sources:
+        if s.get('enabled', True):
+            threading.Thread(target=do_scan_source_backend, args=(s['id'],), daemon=True).start()
+            scanned_count += 1
+    return jsonify({'ok': True, 'count': scanned_count})
 
 def do_scan_source_backend(source_id):
     """Background scanner worker for a source"""
@@ -1023,10 +1036,37 @@ def background_audio_cacher():
         except Exception:
             pass
 
+def background_autoscan_worker():
+    """Background worker thread that automatically scans all Google Drive sources for new music files"""
+    time.sleep(12)
+    while True:
+        try:
+            cfg = load_config()
+            enabled = cfg.get('auto_scan_enabled', True)
+            interval_mins = max(1, int(cfg.get('auto_scan_interval_minutes', 15)))
+
+            if enabled:
+                print(f"[AUTO-SCAN WORKER] Checking active sources for new music files...", flush=True)
+                sources = load_sources()
+                for s in sources:
+                    if s.get('enabled', True):
+                        do_scan_source_backend(s['id'])
+                cfg['last_auto_scan'] = time.time()
+                save_config(cfg)
+                print(f"[AUTO-SCAN OK] Completed checking all active Google Drive sources.", flush=True)
+
+        except Exception as e:
+            print(f"[AUTO-SCAN ERROR] {e}", flush=True)
+
+        cfg = load_config()
+        interval_mins = max(1, int(cfg.get('auto_scan_interval_minutes', 15)))
+        time.sleep(interval_mins * 60)
+
 # ─── Run ──────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     startup_cleanup()
     threading.Thread(target=background_audio_cacher, daemon=True).start()
+    threading.Thread(target=background_autoscan_worker, daemon=True).start()
     print("=" * 55)
     print("  [*] SoundVault v2.0  |  http://localhost:5000")
     print("=" * 55)

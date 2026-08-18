@@ -34,6 +34,11 @@ const DOM = {
   btnChangePassword: $('btnChangePassword'),
   keyStatus: $('keyStatus'),
   toastContainer: $('toastContainer'),
+  autoScanToggle: $('autoScanToggle'),
+  autoScanInterval: $('autoScanInterval'),
+  autoScanStatusTxt: $('autoScanStatusTxt'),
+  btnSaveAutoScan: $('btnSaveAutoScan'),
+  btnScanAllNow: $('btnScanAllNow'),
 };
 
 let sourcesData = [];
@@ -66,6 +71,8 @@ function bindEvents() {
   DOM.btnSaveKey.addEventListener('click', saveApiKey);
   DOM.btnTestKey.addEventListener('click', testApiKey);
   DOM.btnChangePassword.addEventListener('click', changePassword);
+  if (DOM.btnSaveAutoScan) DOM.btnSaveAutoScan.addEventListener('click', saveAutoScan);
+  if (DOM.btnScanAllNow) DOM.btnScanAllNow.addEventListener('click', scanAllNow);
 }
 
 async function checkAuth() {
@@ -165,6 +172,7 @@ async function loadConfig() {
     if (data.api_key) {
       DOM.apiKeyInput.value = data.api_key;
     }
+    loadAutoScanConfig();
   } catch (e) {}
 }
 
@@ -372,6 +380,64 @@ async function testApiKey() {
   } catch (e) {
     DOM.keyStatus.className = 'key-status err';
     DOM.keyStatus.textContent = '❌ Gagal terhubung ke server';
+  }
+}
+
+async function loadAutoScanConfig() {
+  try {
+    const res = await fetch('/api/admin/config', { headers: getHeaders() });
+    const cfg = await res.json();
+    const enabled = cfg.auto_scan_enabled !== false;
+    const interval = cfg.auto_scan_interval_minutes || 15;
+    if (DOM.autoScanToggle) DOM.autoScanToggle.checked = enabled;
+    if (DOM.autoScanInterval) DOM.autoScanInterval.value = String(interval);
+    updateAutoScanUI(enabled, interval);
+  } catch (e) {}
+}
+
+function updateAutoScanUI(enabled, interval) {
+  if (!DOM.autoScanStatusTxt) return;
+  if (enabled) {
+    DOM.autoScanStatusTxt.textContent = `Auto-Scan Aktif (Pengecekan setiap ${interval} menit)`;
+    DOM.autoScanStatusTxt.parentElement.style.color = '#10b981';
+  } else {
+    DOM.autoScanStatusTxt.textContent = 'Auto-Scan Dinonaktifkan';
+    DOM.autoScanStatusTxt.parentElement.style.color = '#ef4444';
+  }
+}
+
+async function saveAutoScan() {
+  const auto_scan_enabled = DOM.autoScanToggle.checked;
+  const auto_scan_interval_minutes = parseInt(DOM.autoScanInterval.value, 10);
+  try {
+    const res = await fetch('/api/admin/config', {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ auto_scan_enabled, auto_scan_interval_minutes }),
+    });
+    if (res.ok) {
+      toast('Pengaturan Auto-Scan berhasil disimpan!', 'success');
+      updateAutoScanUI(auto_scan_enabled, auto_scan_interval_minutes);
+    }
+  } catch (e) {
+    toast('Gagal menyimpan pengaturan Auto-Scan', 'error');
+  }
+}
+
+async function scanAllNow() {
+  try {
+    toast('Memulai scan semua folder Google Drive...', 'success');
+    const res = await fetch('/api/admin/scan-all', {
+      method: 'POST',
+      headers: getHeaders(),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      toast(`Scanning ${data.count} sumber sedang berjalan di background...`, 'success');
+      await loadSources();
+    }
+  } catch (e) {
+    toast('Gagal melakukan scan', 'error');
   }
 }
 
