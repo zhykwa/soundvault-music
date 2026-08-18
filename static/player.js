@@ -749,6 +749,18 @@ function renderAll(tracks) {
   }
 }
 
+function setMarqueeTitle(el, text) {
+  if (!el) return;
+  const escaped = esc(text);
+  if (text.length > 20) {
+    el.innerHTML = `<div class="marquee-track"><span class="marquee-content">${escaped}</span><span class="marquee-content" aria-hidden="true">${escaped}</span></div>`;
+    el.classList.add('has-marquee');
+  } else {
+    el.textContent = text;
+    el.classList.remove('has-marquee');
+  }
+}
+
 /* ═══════════════════════════════════════════════════
    PLAY TRACK
    ═══════════════════════════════════════════════════ */
@@ -775,12 +787,12 @@ function playTrack(idx) {
 
   // Hero card
   DOM.heroTag.textContent      = 'Sedang Diputar';
-  DOM.heroTitle.textContent    = title;
+  setMarqueeTitle(DOM.heroTitle, title);
   DOM.heroSubtitle.innerHTML   = `<strong>${esc(artist)}</strong>${album ? ' · ' + esc(album) : ''}`;
 
   // Right panel
-  DOM.rpHeaderTitle.textContent = title;
-  DOM.npTitle.textContent       = title;
+  setMarqueeTitle(DOM.rpHeaderTitle, title);
+  setMarqueeTitle(DOM.npTitle, title);
   DOM.npArtist.textContent      = artist;
   DOM.npAlbum.textContent       = album ? `Album: ${album}` : '';
   DOM.npFormat.textContent      = fmt;
@@ -807,7 +819,7 @@ function playTrack(idx) {
   }
 
   // Bottom bar
-  DOM.pbTitle.textContent  = title;
+  setMarqueeTitle(DOM.pbTitle, title);
   DOM.pbArtist.textContent = `${artist}${album ? ' · ' + album : ''}`;
 
   // Download button

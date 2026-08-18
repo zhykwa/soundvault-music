@@ -930,6 +930,28 @@ html, body {
 /* ─── UTILS ──────────────────────────────────────── */
 .hidden { display: none !important; }
 
+/* ─── MARQUEE SCROLLING TITLE FOR LONG SONGS ─── */
+.has-marquee {
+  overflow: hidden !important;
+  position: relative !important;
+  white-space: nowrap !important;
+}
+.marquee-track {
+  display: inline-flex !important;
+  gap: 36px !important;
+  white-space: nowrap !important;
+  animation: marquee-scroll-loop 12s linear infinite !important;
+  will-change: transform;
+}
+.marquee-content {
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+@keyframes marquee-scroll-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* ─── MOBILE & TABLET RESPONSIVE SYSTEM ─────────────────────────── */
 @media (max-width: 1024px) {
   .app-body {
@@ -980,7 +1002,7 @@ html, body {
   .app-body {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 52px - 110px);
+    height: calc(100vh - 52px - 75px);
     padding: 6px;
     gap: 6px;
     overflow-y: auto;
@@ -1009,9 +1031,9 @@ html, body {
     background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(15,23,42,0.8)) !important;
     border: 1px solid rgba(34,197,94,0.25) !important;
   }
-  .hero-cover-wrap { width: 90px; height: 90px; flex-shrink: 0; }
-  .hero-title { font-size: 1.15rem !important; color: #ffffff !important; }
-  .hero-subtitle { font-size: 0.8rem !important; color: #94a3b8 !important; }
+  .hero-cover-wrap { width: 85px; height: 85px; flex-shrink: 0; }
+  .hero-title { font-size: 1.1rem !important; color: #ffffff !important; }
+  .hero-subtitle { font-size: 0.78rem !important; color: #94a3b8 !important; }
   .hero-actions { justify-content: center; }
 
   /* Songs Table Mobile */
@@ -1032,7 +1054,7 @@ html, body {
     gap: 8px !important;
   }
 
-  /* Fixed Bottom Player Bar Mobile */
+  /* De-cluttered 2-Row Mobile Bottom Player Bar */
   .bottom-bar {
     position: fixed !important;
     bottom: 0 !important;
@@ -1042,89 +1064,94 @@ html, body {
     display: flex !important;
     flex-direction: column !important;
     height: auto !important;
-    padding: 6px 10px 10px !important;
+    padding: 6px 10px 8px !important;
     gap: 4px !important;
-    background: rgba(15, 23, 42, 0.96) !important;
-    backdrop-filter: blur(16px) !important;
-    border-top: 1.5px solid rgba(34, 197, 94, 0.3) !important;
-    box-shadow: 0 -8px 24px rgba(0,0,0,0.6) !important;
+    background: rgba(11, 19, 41, 0.96) !important;
+    backdrop-filter: blur(20px) !important;
+    border-top: 1.5px solid rgba(34, 197, 94, 0.35) !important;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.7) !important;
     z-index: 1000 !important;
   }
 
-  /* Progress Bar on Mobile Top of Footer */
+  /* Row 1: Slim Progress Line & Time Displays */
   .progress-row {
     width: 100% !important;
     max-width: 100% !important;
-    margin-bottom: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 2px !important;
   }
-  .progress-track { height: 4px !important; background: #1e293b !important; }
-  .time-txt { font-size: 0.65rem !important; color: #94a3b8 !important; min-width: 26px !important; }
+  .progress-track { height: 3.5px !important; background: rgba(255,255,255,0.12) !important; }
+  .time-txt { font-size: 0.65rem !important; color: #94a3b8 !important; min-width: 24px !important; }
 
   /* Controls Row: Left Info + Center Play + Right Quality */
   .bp-left {
-    width: 100% !important;
+    width: auto !important;
+    flex: 1 !important;
+    min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
     gap: 6px !important;
   }
-  .bp-mini-art { width: 36px !important; height: 36px !important; border-radius: 6px !important; }
-  .bp-info { flex: 1; min-width: 0; }
-  .bp-title { font-size: 0.8rem !important; color: #ffffff !important; }
-  .bp-artist { font-size: 0.68rem !important; color: #94a3b8 !important; }
-  .bp-like-btn { padding: 2px; color: #94a3b8 !important; }
+  .bp-mini-art { width: 36px !important; height: 36px !important; border-radius: 6px !important; flex-shrink: 0 !important; }
+  .bp-info { flex: 1 !important; min-width: 0 !important; overflow: hidden !important; }
+  .bp-title { font-size: 0.8rem !important; color: #ffffff !important; font-weight: 700 !important; }
+  .bp-artist { font-size: 0.68rem !important; color: #94a3b8 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+  .bp-like-btn { display: none !important; }
 
   /* Center Controls on Mobile */
   .bp-center {
     width: auto !important;
     display: flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 2px !important;
+    flex-shrink: 0 !important;
   }
-  .bp-controls { gap: 4px !important; }
+  .bp-controls { gap: 2px !important; }
+  #btnShuffle, #btnRepeat { display: none !important; }
   .ctrl-btn { width: 28px !important; height: 28px !important; color: #94a3b8 !important; }
-  .play-main-btn { width: 36px !important; height: 36px !important; background: #22c55e !important; color: #ffffff !important; }
+  .play-main-btn { width: 36px !important; height: 36px !important; background: #22c55e !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(34,197,94,0.4) !important; }
 
-  /* Right Section: Audio Quality Selector Dropdown & Download */
+  /* Right Section: Compact Audio Quality Selector Dropdown & Download */
   .bp-right {
-    width: 100% !important;
+    width: auto !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    margin-top: 2px !important;
-    padding-top: 4px !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    border-top: none !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
   .volume-row { display: none !important; }
   
   .quality-select-wrapper {
     display: flex !important;
-    flex: 1 !important;
     align-items: center !important;
-    gap: 4px !important;
-    background: #0f172a !important;
-    border: 1px solid #1e293b !important;
-    border-radius: 8px !important;
-    padding: 3px 8px !important;
+    background: rgba(34,197,94,0.12) !important;
+    border: 1px solid rgba(34,197,94,0.3) !important;
+    border-radius: 20px !important;
+    padding: 2px 6px !important;
   }
   .quality-select {
-    font-size: 0.72rem !important;
+    font-size: 0.7rem !important;
     color: #4ade80 !important;
     background: transparent !important;
     border: none !important;
     font-weight: 700 !important;
+    cursor: pointer !important;
   }
   .quality-select option { background: #0f172a !important; color: #ffffff !important; }
   
   .dl-btn {
-    padding: 4px 10px !important;
-    font-size: 0.72rem !important;
-    background: rgba(34,197,94,0.15) !important;
-    border: 1px solid rgba(34,197,94,0.4) !important;
-    color: #4ade80 !important;
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #ffffff !important;
     border-radius: 20px !important;
   }
 
-  .toast-box { bottom: 130px; right: 8px; left: 8px; }
+  .toast-box { bottom: 95px; right: 8px; left: 8px; }
 }
