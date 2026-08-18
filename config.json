@@ -2,5 +2,6 @@
   "api_key": "",
   "music_dir": "music",
   "admin_password": "admin123",
-  "admin_secret_path": "admin-c11cc-secret-9f8a7b6c"
+  "admin_secret_path": "admin-c11cc-secret-9f8a7b6c",
+  "last_auto_scan": 1787053729.0145805
 }
