@@ -808,105 +808,136 @@ html, body {
 .rp-text { font-size: 0.8rem; color: var(--text-sub); line-height: 1.55; }
 
 /* ═══════════════════════════════════════════════════
-   BOTTOM PLAYER BAR (WHITE CLEAN)
+   BOTTOM PLAYER BAR (DARK GLASSMORPHISM)
    ═══════════════════════════════════════════════════ */
 .bottom-bar {
-  height: 84px;
-  background: #ffffff;
-  border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: 260px 1fr 260px; align-items: center;
-  padding: 0 18px; gap: 10px; flex-shrink: 0; z-index: 100;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(11, 19, 41, 0.96);
+  backdrop-filter: blur(20px);
+  border-top: 1.5px solid rgba(34, 197, 94, 0.35);
+  padding: 6px 18px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 1000;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
 }
 
-/* Left */
-.bp-left { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.bp-mini-art {
-  width: 50px; height: 50px; border-radius: 8px; flex-shrink: 0;
-  background: #e2e8f0; border: 1px solid var(--border); overflow: hidden;
-  display: flex; align-items: center; justify-content: center; color: var(--green);
-  font-size: 1rem; position: relative; transition: var(--spring);
-}
-.bp-mini-art img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-
-.bp-info { min-width: 0; }
-.bp-title {
-  font-size: 0.86rem; font-weight: 700; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.bp-artist {
-  font-size: 0.73rem; color: var(--text-muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
-}
-.bp-like-btn {
-  background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; flex-shrink: 0;
-  transition: var(--spring);
-}
-.bp-like-btn:hover { color: var(--green); transform: scale(1.15); }
-
-/* Center controls */
-.bp-center { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
-.bp-controls { display: flex; align-items: center; gap: 12px; }
-
-.ctrl-btn {
-  background: none; border: none; color: var(--text-sub); cursor: pointer;
-  transition: var(--ease); width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
-.ctrl-btn:hover { color: var(--green-dark); background: #f1f5f9; transform: scale(1.1); }
-.ctrl-btn.active { color: var(--green); }
-
-.play-main-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: var(--green); border: none; color: #ffffff; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: var(--spring); box-shadow: 0 4px 12px rgba(22,163,74,0.3);
-}
-.play-main-btn:hover { transform: scale(1.1); background: var(--green-dark); box-shadow: 0 6px 16px rgba(22,163,74,0.4); }
-
-/* Progress */
-.progress-row { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 560px; }
-.time-txt {
-  font-family: 'JetBrains Mono', monospace; font-size: 0.71rem; color: var(--text-muted);
-  min-width: 33px; text-align: center; flex-shrink: 0;
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 .progress-track {
-  flex: 1; height: 5px; background: #e2e8f0; border-radius: var(--r-pill);
-  cursor: pointer; position: relative; transition: height 0.12s ease;
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: height 0.12s ease;
 }
-.progress-track:hover { height: 7px; }
+.progress-track:hover { height: 6px; }
 .progress-fill {
-  height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--green-dark));
-  border-radius: var(--r-pill); transition: width 0.1s linear; position: relative;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #16a34a, #22c55e, #4ade80);
+  border-radius: 4px;
+  transition: width 0.1s linear;
 }
-.progress-fill::after {
-  content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%) scale(0);
-  width: 13px; height: 13px; border-radius: 50%; background: var(--green-dark);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: transform 0.12s ease;
+.time-txt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  min-width: 32px;
+  text-align: center;
 }
-.progress-track:hover .progress-fill::after { transform: translateY(-50%) scale(1); }
 
-/* Right */
-.bp-right { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.bp-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.bp-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 280px;
+  min-width: 0;
+}
+.bp-mini-art {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  background: #1e293b;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.bp-mini-art img { width: 100%; height: 100%; object-fit: cover; }
+.bp-info { flex: 1; min-width: 0; overflow: hidden; }
+.bp-title { font-size: 0.88rem; font-weight: 700; color: #ffffff; }
+.bp-artist { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+.bp-like-btn { background: none; border: none; cursor: pointer; color: #94a3b8; padding: 4px; flex-shrink: 0; }
+.bp-like-btn:hover { color: #22c55e; }
+
+.bp-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bp-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ctrl-btn {
+  background: none; border: none; color: #94a3b8; cursor: pointer;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+}
+.ctrl-btn:hover { color: #ffffff; background: rgba(255,255,255,0.08); }
+.play-main-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #22c55e; border: none; color: #ffffff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(34,197,94,0.4);
+  transition: transform 0.15s ease;
+}
+.play-main-btn:hover { transform: scale(1.08); background: #16a34a; }
+
+.bp-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  width: 280px;
+}
 .quality-select-wrapper {
   display: flex; align-items: center; gap: 4px;
-  background: var(--green-light); border: 1px solid var(--border-acc);
-  padding: 3px 8px; border-radius: var(--r-pill); transition: var(--ease);
+  background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 3px 10px; border-radius: 20px;
 }
-.quality-select-wrapper:hover { border-color: var(--green); }
 .quality-select {
   background: transparent; border: none; outline: none;
-  font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 800;
-  color: var(--green-dark); cursor: pointer; padding-right: 2px;
+  font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800;
+  color: #4ade80; cursor: pointer;
 }
-.quality-select option { background: #ffffff; color: var(--text); font-weight: 600; }
+.quality-select option { background: #0f172a; color: #ffffff; }
 .volume-row { display: flex; align-items: center; gap: 7px; }
-.vol-input { width: 82px; cursor: pointer; accent-color: var(--green); }
+.vol-input { width: 80px; cursor: pointer; accent-color: #22c55e; }
 .dl-btn {
-  padding: 6px 14px; border-radius: var(--r-pill);
-  background: var(--green-light); border: 1px solid var(--border-acc);
-  color: var(--green-dark); font-family: 'Outfit', sans-serif;
-  font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: var(--spring); white-space: nowrap;
+  padding: 5px 12px; border-radius: 20px;
+  background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80; font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap;
 }
 .dl-btn:hover { background: var(--green); color: #ffffff; transform: scale(1.05); }
 
