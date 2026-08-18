@@ -630,7 +630,7 @@ def api_stream_gdrive(file_id):
         return jsonify({'error': str(e)}), 502
 
     def generate():
-        for chunk in dr.iter_content(chunk_size=262144):
+        for chunk in dr.iter_content(chunk_size=65536):
             if chunk: yield chunk
 
     mime = dr.headers.get('Content-Type', 'audio/flac')
