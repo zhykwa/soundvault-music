@@ -388,49 +388,39 @@ function drawViz() {
         if (v > maxVal) maxVal = v;
         count++;
       }
-      const rawVal = count > 0 ? (sum / count) * 0.4 + maxVal * 0.6 : 0;
-      const eqBoost = 1.0 + Math.pow(k / NUM_BANDS, 0.7) * 0.8;
-      const targetVal = Math.min(255, rawVal * eqBoost);
+      const rawVal = count > 0 ? (sum / count) * 0.5 + maxVal * 0.5 : 0;
+      // Headroom Gain Control: Smoothly scale down so middle bars don't clip at top ceiling
+      const eqBoost = 0.72 + (k / NUM_BANDS) * 0.35;
+      const targetVal = Math.min(195, rawVal * eqBoost);
 
-      bandValues[k] += (targetVal - bandValues[k]) * 0.38;
+      bandValues[k] += (targetVal - bandValues[k]) * 0.32;
     }
   } else {
-    // Synthetic fallback animation
+    // Synthetic fallback animation with headroom limit
     const time = (audio.currentTime || Date.now() / 1000);
     for (let k = 0; k < NUM_BANDS; k++) {
-      const wave = Math.sin(time * 6 + k * 0.4) * 0.4 + Math.cos(time * 11 - k * 0.8) * 0.3 + 0.5;
-      bandValues[k] = wave * 180;
+      const wave = Math.sin(time * 5 + k * 0.35) * 0.35 + Math.cos(time * 9 - k * 0.7) * 0.25 + 0.45;
+      bandValues[k] = wave * 140;
     }
   }
 
-  // Draw 20 Equalizer Bars
+  // Draw 20 Clean Emerald Equalizer Bars (Matching Reference Style)
   const labelHeight = 16;
   const barAreaHeight = ch - labelHeight - 6;
-  const padding = 3;
+  const maxAllowedHeight = barAreaHeight * 0.72; // 72% Max Height limit for 28% top breathing room
+  const padding = 3.5;
   const totalPadding = padding * (NUM_BANDS + 1);
   const barWidth = (cw - totalPadding) / NUM_BANDS;
 
-  ctx.font = '600 8.5px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-
   for (let k = 0; k < NUM_BANDS; k++) {
     const val = bandValues[k];
-    const h = Math.max(2, (val / 255) * barAreaHeight);
+    const h = Math.max(3, (val / 200) * maxAllowedHeight);
     const x = padding + k * (barWidth + padding);
     const y = barAreaHeight - h + 2;
 
-    // Peak dot decay
-    if (h > bandPeaks[k]) {
-      bandPeaks[k] = h;
-      peakDecay[k] = 0;
-    } else {
-      peakDecay[k] += 0.4;
-      bandPeaks[k] = Math.max(0, bandPeaks[k] - peakDecay[k]);
-    }
-
-    // Bar Gradient fill
+    // Clean Emerald Green Gradient matching reference image style
     const grad = ctx.createLinearGradient(0, barAreaHeight, 0, y);
-    grad.addColorStop(0, '#16a34a');
+    grad.addColorStop(0, '#15803d');
     grad.addColorStop(0.5, '#22c55e');
     grad.addColorStop(1, '#4ade80');
 
@@ -438,11 +428,6 @@ function drawViz() {
     ctx.beginPath();
     ctx.roundRect(x, y, barWidth, h, 2);
     ctx.fill();
-
-    // Draw Peak Cap Dot
-    const peakY = barAreaHeight - bandPeaks[k];
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(x, Math.max(2, peakY), barWidth, 2);
   }
 
   // Draw Reference Logarithmic Frequency Labels matching reference image
