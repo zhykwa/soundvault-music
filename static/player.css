@@ -614,18 +614,18 @@ html, body {
 .hero-left { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
 
 .hero-cover {
-  width: 88px; height: 88px;
+  width: 96px; height: 96px;
   border-radius: var(--r-md);
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1.5px solid var(--border-acc);
+  background: #0f172a;
+  border: 1.5px solid rgba(34, 197, 94, 0.35);
   overflow: hidden;
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  color: var(--green);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  color: #22c55e;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
-.hero-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.hero-cover img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; background: #0f172a; }
 
 .hero-meta { min-width: 0; flex: 1; }
 .hero-tag {
@@ -741,18 +741,19 @@ html, body {
 
 .rp-cover-wrap {
   width: 100%; aspect-ratio: 1; border-radius: var(--r-lg);
-  overflow: hidden; background: #e2e8f0; border: 1.5px solid var(--border);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06); position: relative;
-  display: flex; align-items: center; justify-content: center; color: var(--green);
+  overflow: hidden; background: #0f172a; border: 1.5px solid rgba(34, 197, 94, 0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4); position: relative;
+  display: flex; align-items: center; justify-content: center; color: #22c55e;
   transition: var(--ease);
 }
-.rp-cover-wrap:hover { transform: scale(1.015); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
-.rp-cover-wrap img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.rp-cover-wrap:hover { transform: scale(1.015); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
+.rp-cover-wrap img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; background: #0f172a; }
 .rp-cover-fallback {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; width: 100%; height: 100%; background: #f8fafc;
+  gap: 8px; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(15,23,42,0.9));
+  color: #22c55e;
 }
-.rp-cover-fallback span { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.rp-cover-fallback span { font-size: 0.78rem; color: #94a3b8; font-weight: 600; }
 
 .rp-track { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .rp-track-details { min-width: 0; flex: 1; }

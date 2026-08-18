@@ -837,34 +837,38 @@ function playTrack(idx) {
 }
 
 function loadCoverArt(url) {
-  // Right panel large cover
-  DOM.coverArt.onload = () => {
-    DOM.coverArt.classList.remove('hidden');
-    DOM.rpCoverFallback && DOM.rpCoverFallback.classList.add('hidden');
-  };
-  DOM.coverArt.onerror = () => {
-    DOM.coverArt.classList.add('hidden');
-    DOM.rpCoverFallback && DOM.rpCoverFallback.classList.remove('hidden');
-  };
-  DOM.coverArt.src = url;
-
-  // Hero card cover
-  if (DOM.heroCoverImg) {
-    DOM.heroCoverImg.onload = () => {
-      DOM.heroCoverImg.classList.remove('hidden');
-      DOM.heroCoverFallback && DOM.heroCoverFallback.classList.add('hidden');
-    };
-    DOM.heroCoverImg.onerror = () => {
-      DOM.heroCoverImg.classList.add('hidden');
-      DOM.heroCoverFallback && DOM.heroCoverFallback.classList.remove('hidden');
-    };
-    DOM.heroCoverImg.src = url;
+  if (!url) {
+    showFallbackArt();
+    return;
   }
 
-  // Bottom bar mini art
-  DOM.pbArt.onload  = () => { DOM.pbArt.classList.remove('hidden'); DOM.pbFallback.classList.add('hidden'); };
-  DOM.pbArt.onerror = () => { DOM.pbArt.classList.add('hidden');    DOM.pbFallback.classList.remove('hidden'); };
-  DOM.pbArt.src = url;
+  function bindImg(imgEl, fallbackEl) {
+    if (!imgEl) return;
+    const temp = new Image();
+    temp.onload = () => {
+      imgEl.src = url;
+      imgEl.classList.remove('hidden');
+      if (fallbackEl) fallbackEl.classList.add('hidden');
+    };
+    temp.onerror = () => {
+      imgEl.classList.add('hidden');
+      if (fallbackEl) fallbackEl.classList.remove('hidden');
+    };
+    temp.src = url;
+  }
+
+  bindImg(DOM.coverArt, DOM.rpCoverFallback);
+  bindImg(DOM.heroCoverImg, DOM.heroCoverFallback);
+  bindImg(DOM.pbArt, DOM.pbFallback);
+}
+
+function showFallbackArt() {
+  if (DOM.coverArt) DOM.coverArt.classList.add('hidden');
+  if (DOM.rpCoverFallback) DOM.rpCoverFallback.classList.remove('hidden');
+  if (DOM.heroCoverImg) DOM.heroCoverImg.classList.add('hidden');
+  if (DOM.heroCoverFallback) DOM.heroCoverFallback.classList.remove('hidden');
+  if (DOM.pbArt) DOM.pbArt.classList.add('hidden');
+  if (DOM.pbFallback) DOM.pbFallback.classList.remove('hidden');
 }
 
 /* ═══════════════════════════════════════════════════
