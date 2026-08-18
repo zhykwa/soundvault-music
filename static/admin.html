@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login – SoundVault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="15" stroke="url(#lg)" stroke-width="2"/>
+        <path d="M10 22V10l14 6-14 6z" fill="url(#lg)"/>
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#10b981"/><stop offset="1" stop-color="#0d9488"/>
+        </linearGradient></defs>
+      </svg>
+      <span class="logo-text">Sound<span class="logo-accent">Vault</span></span>
+    </div>
+    <nav class="nav">
+      <a href="/" class="nav-link">Downloader</a>
+      <a href="/player" class="nav-link">Player</a>
+    </nav>
+  </header>
+
+  <!-- LOGIN VIEW -->
+  <div id="loginView" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-icon">🔒</div>
+      <h2>Login Admin</h2>
+      <p>Masukkan password admin untuk mengelola sumber musik & API key</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Password Admin</label>
+          <input type="password" id="loginPassword" placeholder="Masukkan password..." required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn-primary btn-block">Login</button>
+      </form>
+      <p class="login-note">Password default: <code>admin123</code> (bisa diubah setelah login)</p>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD VIEW -->
+  <div id="adminView" class="page hidden">
+    <div class="page-title-row">
+      <div class="page-title">
+        <h1>Dashboard Admin</h1>
+        <p>Kelola sumber musik Google Drive & Pengaturan</p>
+      </div>
+      <button id="btnLogout" class="btn-ghost-sm">🔒 Logout Admin</button>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-card">
+        <div class="stat-icon">📂</div>
+        <div><div class="stat-val" id="statSources">–</div><div class="stat-label">Sumber</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎵</div>
+        <div><div class="stat-val" id="statTracks">–</div><div class="stat-label">Total Lagu</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💾</div>
+        <div><div class="stat-val" id="statSize">–</div><div class="stat-label">Total Ukuran</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" id="apiIcon">🔑</div>
+        <div><div class="stat-val" id="statApiKey">Belum diset</div><div class="stat-label">Google API Key</div></div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <!-- LEFT: Sources -->
+      <div class="col-main">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Sumber Musik</h2>
+            <button class="btn-primary" id="btnAddSource">+ Tambah Sumber</button>
+          </div>
+
+          <!-- Add Source Form -->
+          <div class="add-form hidden" id="addForm">
+            <div class="form-group">
+              <label>Link Google Drive (folder atau file)</label>
+              <input id="fUrl" type="url" placeholder="https://drive.google.com/drive/folders/..."/>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Nama Sumber</label>
+                <input id="fName" type="text" placeholder="Koleksi Jazz, FLAC 2024, dll."/>
+              </div>
+              <div class="form-group">
+                <label>Warna</label>
+                <input id="fColor" type="color" value="#10b981" class="color-input"/>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-ghost" id="btnCancelAdd">Batal</button>
+              <button class="btn-primary" id="btnConfirmAdd">Tambah Sumber</button>
+            </div>
+          </div>
+
+          <!-- Sources List -->
+          <div id="sourcesList"></div>
+          <div id="sourcesEmpty" class="empty-state hidden">
+            <div class="empty-icon">📂</div>
+            <p>Belum ada sumber musik</p>
+            <small>Klik "Tambah Sumber" lalu paste link Google Drive folder kamu</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Settings -->
+      <div class="col-side">
+        <!-- API Key Card -->
+        <div class="card">
+          <h2 class="card-title">Google API Key</h2>
+          <p class="hint">Dibutuhkan untuk scan folder Drive. Gratis, tidak perlu kartu kredit.</p>
+          <div class="form-group" style="margin-top:14px">
+            <label>API Key</label>
+            <div class="input-row">
+              <input id="apiKeyInput" type="password" placeholder="AIza..."/>
+              <button class="icon-btn" id="btnToggleKey" title="Tampilkan/sembunyikan">👁</button>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-ghost" id="btnTestKey">Test Key</button>
+            <button class="btn-primary" id="btnSaveKey">Simpan</button>
+          </div>
+          <div id="keyStatus" class="key-status hidden"></div>
+        </div>
+
+        <!-- Change Password Card -->
+        <div class="card" style="margin-top:16px">
+          <h2 class="card-title">Ubah Password Admin</h2>
+          <div class="form-group" style="margin-top:10px">
+            <label>Password Baru</label>
+            <input id="newPasswordInput" type="password" placeholder="Minimal 4 karakter..." />
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" id="btnChangePassword">Ubah Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

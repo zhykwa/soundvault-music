@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SoundVault – Player</title>
+  <meta name="description" content="SoundVault – Putar koleksi lossless audio dari Google Drive Anda."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="player.css?v=20260817_mobile"/>
+</head>
+<body>
+
+  <!-- ANIMATED BG ORBS -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="sv-app">
+
+    <!-- ══════════ TOP BAR ══════════ -->
+    <header class="top-bar">
+
+      <!-- CUSTOM SOUNDVAULT LOGO -->
+      <a href="/" class="app-logo">
+        <div class="logo-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="svG1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#16a34a"/>
+                <stop offset="100%" stop-color="#4ade80"/>
+              </linearGradient>
+            </defs>
+            <path d="M17 2.5 L29.5 9.5 L29.5 24.5 L17 31.5 L4.5 24.5 L4.5 9.5 Z"
+                  fill="#0f2e1a" stroke="url(#svG1)" stroke-width="1.5" stroke-linejoin="round"/>
+            <rect x="8"  y="15" width="2" height="4"  rx="1" fill="#4ade80" opacity="0.65"/>
+            <rect x="11" y="12" width="2" height="10" rx="1" fill="#22c55e" opacity="0.8"/>
+            <rect x="14" y="9"  width="2" height="16" rx="1" fill="#22c55e"/>
+            <rect x="17" y="11" width="2" height="12" rx="1" fill="#22c55e"/>
+            <rect x="20" y="13" width="2" height="8"  rx="1" fill="#22c55e" opacity="0.8"/>
+            <rect x="23" y="16" width="2" height="3"  rx="1" fill="#4ade80" opacity="0.65"/>
+          </svg>
+        </div>
+        <span class="logo-name">Sound<span class="logo-accent">Vault</span></span>
+      </a>
+
+      <!-- SEARCH -->
+      <div class="search-bar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Cari lagu, artis, atau album…" autocomplete="off"/>
+      </div>
+
+      <!-- NAV -->
+      <nav class="top-nav">
+        <a href="/" class="nav-link">Downloader</a>
+        <a href="/player" class="nav-link active">Player</a>
+      </nav>
+    </header>
+
+    <!-- ══════════ 3-COLUMN BODY ══════════ -->
+    <div class="app-body">
+
+      <!-- ── LEFT PANEL ── -->
+      <aside class="panel left-panel">
+
+        <div class="panel-top">
+          <div class="panel-title">
+            <div class="panel-title-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+            </div>
+            <span>Koleksi Kamu</span>
+          </div>
+          <button class="btn-create" onclick="window.location.href='/admin'">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Buat
+          </button>
+        </div>
+
+        <div class="lib-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="libSearchInput" placeholder="Cari di koleksi…"/>
+        </div>
+
+        <div class="source-chips" id="sourceChips">
+          <button class="chip active" data-source="all">Semua</button>
+        </div>
+
+        <div class="lib-list" id="trackList"></div>
+
+        <div id="emptyLibrary" class="empty-lib hidden">
+          <div class="empty-lib-icon">🎵</div>
+          <p>Belum ada lagu di koleksi</p>
+          <a href="/admin">Buka Dashboard Admin →</a>
+        </div>
+      </aside>
+
+      <!-- ── CENTER PANEL ── -->
+      <main class="panel center-panel" id="mainPanel">
+        <div class="center-inner">
+
+          <!-- Tab filter categories -->
+          <div class="tab-row">
+            <button class="tab-btn active" data-tab="all">Semua</button>
+            <button class="tab-btn" data-tab="songs">Lagu</button>
+            <button class="tab-btn" data-tab="artists">Artis</button>
+            <button class="tab-btn" data-tab="albums">Album</button>
+            <button class="tab-btn" data-tab="flac">FLAC (Lossless)</button>
+            <button class="tab-btn" data-tab="mp3">MP3 / Lainnya</button>
+          </div>
+
+          <!-- Active Filter Breadcrumb / Banner -->
+          <div id="filterBreadcrumb" class="filter-breadcrumb hidden">
+            <div class="fb-info">
+              <span class="fb-label" id="fbLabel">Kategori:</span>
+              <span class="fb-value" id="fbValue"></span>
+            </div>
+            <button id="btnClearFilter" class="btn-clear-filter">✕ Reset Filter</button>
+          </div>
+
+          <!-- GRID VIEW (for Artis & Album cards) -->
+          <div id="gridSection" class="grid-section hidden"></div>
+
+          <!-- HERO NOW PLAYING -->
+          <div class="hero-card" id="heroCard">
+            <div class="hero-left">
+              <div class="hero-cover" id="heroCover">
+                <svg id="heroCoverFallback" viewBox="0 0 24 24" fill="currentColor" width="30" height="30" opacity="0.3">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                <img id="heroCoverImg" class="hidden" alt="Cover"/>
+              </div>
+              <div class="hero-meta">
+                <div class="hero-tag" id="heroTag">Sedang Diputar</div>
+                <h1 class="hero-title" id="heroTitle">Pilih Lagu</h1>
+                <p class="hero-subtitle" id="heroSubtitle">Klik ▶ pada lagu di bawah untuk mulai memutar</p>
+              </div>
+            </div>
+            <button class="hero-play-btn" id="heroPlayBtn" title="Putar / Jeda">
+              <svg id="heroPlayIcon" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <svg id="heroPauseIcon" class="hidden" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- SONGS TABLE -->
+          <div class="songs-section">
+            <div class="section-header">
+              <span class="section-title">Daftar Lagu</span>
+              <span class="section-count" id="trackCount">–</span>
+            </div>
+            <div class="songs-head">
+              <span style="text-align:center">#</span>
+              <span>Judul</span>
+              <span>Format</span>
+              <span>Album</span>
+              <span></span>
+            </div>
+            <div id="centerSongsList"></div>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- ── RIGHT PANEL ── -->
+      <aside class="panel right-panel">
+        <div class="right-inner">
+
+          <div class="rp-header">
+            <span class="rp-header-title" id="rpHeaderTitle">Sedang Diputar</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);flex-shrink:0">
+              <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+            </svg>
+          </div>
+
+          <!-- Big album cover -->
+          <div class="rp-cover-wrap" id="rpCoverWrap">
+            <div class="rp-cover-fallback" id="rpCoverFallback">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="56" height="56" style="color:var(--green);opacity:0.25">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              </svg>
+              <span>Belum ada lagu dipilih</span>
+            </div>
+            <img id="coverArt" class="hidden" alt="Album Cover"/>
+          </div>
+
+          <!-- Track info -->
+          <div class="rp-track">
+            <div class="rp-track-details">
+              <div class="rp-title" id="npTitle">Pilih Lagu</div>
+              <div class="rp-artist" id="npArtist">SoundVault Player</div>
+              <div class="rp-album" id="npAlbum"></div>
+              <div class="rp-badges">
+                <span id="npFormat" class="badge-fmt hidden">FLAC</span>
+                <span id="npSource" class="badge-src hidden">Drive</span>
+              </div>
+            </div>
+            <button class="rp-heart-btn" id="rpHeartBtn" title="Suka">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Visualizer accordion -->
+          <div class="rp-card open">
+            <div class="rp-card-head" onclick="this.parentElement.classList.toggle('open')">
+              <span class="rp-card-head-title">Visualizer Audio</span>
+              <span class="rp-card-head-badge">Lossless</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+            </div>
+            <div class="rp-card-body">
+              <div class="viz-box">
+                <canvas id="vizCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info accordion -->
+          <div class="rp-card open">
+            <div class="rp-card-head" onclick="this.parentElement.classList.toggle('open')">
+              <span class="rp-card-head-title">Info Lagu</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+            </div>
+            <div class="rp-card-body">
+              <p class="rp-text" id="npSourceText">Pilih lagu untuk melihat informasi detail.</p>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+    </div>
+
+    <!-- ══════════ BOTTOM PLAYER BAR ══════════ -->
+    <footer class="bottom-bar" id="controlsCard">
+
+      <!-- LEFT -->
+      <div class="bp-left">
+        <div class="bp-mini-art" id="pbArtWrap">
+          <svg id="pbFallback" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="color:var(--green);opacity:0.4">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+          <img id="pbArt" class="hidden" alt=""/>
+        </div>
+        <div class="bp-info">
+          <div id="pbTitle" class="bp-title">Pilih Lagu</div>
+          <div id="pbArtist" class="bp-artist">SoundVault Player</div>
+        </div>
+        <button class="bp-like-btn" id="bpLikeBtn" title="Suka">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- CENTER -->
+      <div class="bp-center">
+        <div class="bp-controls">
+          <button id="btnShuffle" class="ctrl-btn" title="Acak">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+              <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+            </svg>
+          </button>
+          <button id="btnPrev" class="ctrl-btn" title="Sebelumnya">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+            </svg>
+          </button>
+          <button id="btnPlay" class="play-main-btn" title="Putar / Jeda">
+            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+          <button id="btnNext" class="ctrl-btn" title="Selanjutnya">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M6 18l8.5-6L6 6v12zm2.5-6 8.5 6V6z"/>
+            </svg>
+          </button>
+          <button id="btnRepeat" class="ctrl-btn" title="Ulangi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="progress-row">
+          <span id="timeCurrent" class="time-txt">0:00</span>
+          <div id="progressTrack" class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <span id="timeTotal" class="time-txt">0:00</span>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="bp-right">
+        <div class="quality-select-wrapper" title="Pilih Kualitas Audio Stream">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="color:var(--green);flex-shrink:0;">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <select id="qualitySelect" class="quality-select">
+            <option value="original">Lossless (Asli)</option>
+            <option value="320k">HD (320 kbps)</option>
+            <option value="192k">Medium (192 kbps)</option>
+            <option value="128k">Hemat Data (128 kbps)</option>
+          </select>
+        </div>
+        <div class="volume-row">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="color:var(--text-muted);flex-shrink:0">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+          </svg>
+          <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.8" class="vol-input"/>
+        </div>
+        <button id="btnDownloadCurrent" class="dl-btn hidden">↓ Download</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <div id="toastContainer" class="toast-box"></div>
+
+  <!-- JS stubs for compat -->
+  <button id="btnRewind"  class="hidden"></button>
+  <button id="btnForward" class="hidden"></button>
+
+  <script src="player.js?v=20260818_log20"></script>
+</body>
+</html>

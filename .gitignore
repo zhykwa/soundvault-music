@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+env/
+downloads/
+*.log
+tunnel.log
+app.log
+cloudflared.exe
+*.flac
+*.mp3
+scratch_folder.html

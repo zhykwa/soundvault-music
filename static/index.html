@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoundVault – FLAC Music Downloader</title>
+  <meta name="description" content="Cari dan download musik favorit kamu dalam format FLAC, OPUS, M4A, atau MP3 berkualitas tinggi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background particles -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ─── HEADER ──────────────────────────────────────────── -->
+  <header class="header">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="15" stroke="url(#lg1)" stroke-width="2"/>
+        <path d="M10 22V10l14 6-14 6z" fill="url(#lg1)"/>
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#a855f7"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="logo-text">Sound<span class="logo-accent">Vault</span></span>
+    </div>
+    <nav class="header-nav">
+      <a href="/" class="nav-link active">Downloader</a>
+      <a href="/player" class="nav-link">Player</a>
+    </nav>
+    <div class="header-right">
+      <div id="ffmpegBadge" class="badge badge-warn hidden">
+        <span class="badge-dot"></span> FFmpeg tidak ada
+      </div>
+      <div id="ffmpegOk" class="badge badge-ok hidden">
+        <span class="badge-dot"></span> FFmpeg aktif
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── HERO / SEARCH ────────────────────────────────────── -->
+  <section class="hero">
+    <p class="hero-eyebrow">🎵 Personal Music Downloader</p>
+    <h1 class="hero-title">Cari &amp; Download Musik<br/><span class="gradient-text">Kualitas Terbaik</span></h1>
+    <p class="hero-sub">FLAC · OPUS · M4A · MP3 — Langsung ke komputer kamu</p>
+
+    <div class="search-wrap">
+      <div class="search-box" id="searchBox">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Cari judul lagu, artis, atau album…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="searchBtn" class="search-submit" aria-label="Cari">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+      <div class="search-tags">
+        <span class="search-tag" data-q="lofi hip hop">Lofi Hip Hop</span>
+        <span class="search-tag" data-q="jazz classics">Jazz Classics</span>
+        <span class="search-tag" data-q="acoustic guitar">Acoustic Guitar</span>
+        <span class="search-tag" data-q="synthwave">Synthwave</span>
+        <span class="search-tag" data-q="classical piano">Classical Piano</span>
+      </div>
+    </div>
+
+    <!-- URL Direct paste -->
+    <div class="url-toggle-wrap">
+      <button class="url-toggle-btn" id="urlToggleBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        Paste URL langsung
+      </button>
+    </div>
+    <div class="url-direct-wrap hidden" id="urlDirectWrap">
+      <div class="url-direct-box">
+        <input id="urlDirectInput" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+        <button id="urlDirectBtn" class="btn-primary">Ambil Info</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SEARCH RESULTS ───────────────────────────────────── -->
+  <main class="main-content">
+    <!-- Loading skeleton -->
+    <div id="searchLoading" class="loading-wrap hidden">
+      <div class="spinner"></div>
+      <p>Mencari musik…</p>
+    </div>
+
+    <!-- Error banner -->
+    <div id="searchError" class="error-banner hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span id="searchErrorMsg"></span>
+    </div>
+
+    <!-- Results section -->
+    <section id="resultsSection" class="hidden">
+      <div class="section-header">
+        <h2 id="resultsTitle" class="section-title"></h2>
+        <span id="resultsCount" class="results-count"></span>
+      </div>
+      <div id="resultsGrid" class="results-grid"></div>
+      <div class="load-more-wrap">
+        <button id="loadMoreBtn" class="btn-ghost hidden">Muat lebih banyak</button>
+      </div>
+    </section>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="empty-state">
+      <div class="empty-icon">🎵</div>
+      <h2>Cari lagu favoritmu</h2>
+      <p>Ketik nama lagu, artis, atau album di kolom pencarian di atas</p>
+    </div>
+
+    <!-- Download Queue -->
+    <section id="queueSection" class="queue-section hidden">
+      <h2 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        Antrian Download
+      </h2>
+      <div id="queueList" class="queue-list"></div>
+    </section>
+  </main>
+
+  <!-- ─── DOWNLOAD PANEL (slide-in) ─────────────────────────── -->
+  <div id="panelOverlay" class="panel-overlay hidden"></div>
+  <aside id="downloadPanel" class="download-panel hidden">
+    <button id="panelClose" class="panel-close" aria-label="Tutup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <div class="panel-thumb-wrap">
+      <img id="panelThumb" src="" alt="Thumbnail" class="panel-thumb" />
+      <div class="panel-thumb-gradient"></div>
+    </div>
+
+    <div class="panel-info">
+      <h3 id="panelTitle" class="panel-title"></h3>
+      <p id="panelArtist" class="panel-artist"></p>
+      <p id="panelDuration" class="panel-duration"></p>
+    </div>
+
+    <!-- Format selector -->
+    <div class="format-section">
+      <label class="format-label">Format Audio</label>
+      <div class="format-grid" id="formatGrid">
+        <button class="format-btn active" data-fmt="flac" id="fmt-flac">
+          <span class="fmt-name">FLAC</span>
+          <span class="fmt-desc">Lossless · Terbesar</span>
+        </button>
+        <button class="format-btn" data-fmt="opus" id="fmt-opus">
+          <span class="fmt-name">OPUS</span>
+          <span class="fmt-desc">Native YT · Kecil</span>
+        </button>
+        <button class="format-btn" data-fmt="m4a" id="fmt-m4a">
+          <span class="fmt-name">M4A</span>
+          <span class="fmt-desc">AAC · Kompatibel</span>
+        </button>
+        <button class="format-btn" data-fmt="mp3" id="fmt-mp3">
+          <span class="fmt-name">MP3</span>
+          <span class="fmt-desc">320kbps · Universal</span>
+        </button>
+      </div>
+      <p id="noFfmpegNote" class="no-ffmpeg-note hidden">
+        ⚠️ FFmpeg tidak terinstall. Hanya OPUS yang tersedia.
+        <a href="https://www.gyan.dev/ffmpeg/builds/" target="_blank" rel="noopener">Download FFmpeg →</a>
+      </p>
+    </div>
+
+    <!-- Download button & progress -->
+    <button id="downloadBtn" class="btn-download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download
+    </button>
+
+    <div id="panelProgress" class="panel-progress hidden">
+      <div class="progress-header">
+        <span id="progressStatus">Mendownload…</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div class="progress-meta">
+        <span id="progressSpeed"></span>
+        <span id="progressEta"></span>
+      </div>
+    </div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

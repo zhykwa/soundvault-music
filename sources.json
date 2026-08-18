@@ -1,0 +1,28 @@
+[
+  {
+    "id": "27bf0a0d-dc34-4d52-81b6-34af67edd940",
+    "name": "Drive Source",
+    "type": "gdrive_folder",
+    "url": "https://drive.google.com/drive/folders/1IQp5vrzN2W1A1F4GIBioPH_EYRgLtVjI?usp=sharing",
+    "folder_id": "1IQp5vrzN2W1A1F4GIBioPH_EYRgLtVjI",
+    "file_id": null,
+    "color": "#10b981",
+    "enabled": true,
+    "status": "ready",
+    "track_count": 14,
+    "last_scanned": "2026-08-16T17:08:09Z"
+  },
+  {
+    "id": "1265f58d-e37d-49e8-baa9-1251097c8326",
+    "name": "campur",
+    "type": "gdrive_folder",
+    "url": "https://drive.google.com/drive/folders/1BeIbjxEv3hY7fKOC2iOWCwiTskKGyRwe?usp=sharing",
+    "folder_id": "1BeIbjxEv3hY7fKOC2iOWCwiTskKGyRwe",
+    "file_id": null,
+    "color": "#10b981",
+    "enabled": true,
+    "status": "ready",
+    "track_count": 12,
+    "last_scanned": "2026-08-17T06:59:54Z"
+  }
+]
